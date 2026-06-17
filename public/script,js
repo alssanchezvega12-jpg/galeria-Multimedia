@@ -1,0 +1,73 @@
+// Función para cargar elementos desde MongoDB
+async function cargarGaleria() {
+  const res = await fetch("/api/multimedia");
+  const elementos = await res.json();
+
+  const galeria = document.getElementById("galeria");
+  galeria.innerHTML = ""; // limpiar antes de renderizar
+
+  elementos.forEach(el => {
+    const card = document.createElement("div");
+    card.className = "border p-4 rounded shadow";
+
+    card.innerHTML = `
+      <h3 class="font-bold text-lg">${el.titulo}</h3>
+      <p>${el.descripcion || ""}</p>
+      <img src="${el.imagenUrl}" alt="Imagen" class="w-full h-48 object-cover mt-2">
+      <audio controls src="${el.audioUrl}" class="w-full mt-2"></audio>
+      <p><strong>Tags:</strong> ${el.tags.join(", ")}</p>
+      <button onclick="editarElemento('${el._id}')">✏️ Editar</button>
+      <button onclick="eliminarElemento('${el._id}')">🗑️ Eliminar</button>
+    `;
+
+    galeria.appendChild(card);
+  });
+}
+
+// Guardar nuevo elemento
+document.getElementById("multimediaForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/api/multimedia", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  alert(data.mensaje || "Elemento guardado correctamente 🎵");
+  cargarGaleria();
+});
+
+// Eliminar
+async function eliminarElemento(id) {
+  if (!confirm("¿Seguro que quieres eliminar este elemento?")) return;
+  const res = await fetch(`/api/multimedia/${id}`, { method: "DELETE" });
+  const data = await res.json();
+  alert(data.mensaje);
+  cargarGaleria();
+}
+
+// Editar (ejemplo: solo título y descripción)
+async function editarElemento(id) {
+  const nuevoTitulo = prompt("Nuevo título:");
+  const nuevaDescripcion = prompt("Nueva descripción:");
+
+  if (!nuevoTitulo && !nuevaDescripcion) return;
+
+  const res = await fetch(`/api/multimedia/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      titulo: nuevoTitulo,
+      descripcion: nuevaDescripcion
+    })
+  });
+
+  const data = await res.json();
+  alert(data.mensaje || "Elemento actualizado correctamente ✏️");
+  cargarGaleria();
+}
+
+// Inicializar
+cargarGaleria();

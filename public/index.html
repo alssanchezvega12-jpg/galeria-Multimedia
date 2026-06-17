@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Galería Multimedia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📂 Subir Multimedia</h1>
+  <form id="multimediaForm" enctype="multipart/form-data">
+    <input type="text" name="titulo" placeholder="Título" required>
+    <textarea name="descripcion" placeholder="Descripción"></textarea>
+    <input type="file" name="imagen" accept="image/*" required>
+    <input type="file" name="audio" accept="audio/*" required>
+    <input type="text" name="tags" placeholder="Tags (ej: música,paisaje,revolucionario)">
+    <button type="submit">Guardar</button>
+  </form>
+
+  <h2>🎶 Elementos guardados</h2>
+  <div id="lista"></div>
+
+  <script>
+    const form = document.getElementById('multimediaForm');
+    const lista = document.getElementById('lista');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+
+      const res = await fetch('/api/multimedia', {
+        method: 'POST',
+        body: data
+      });
+      const result = await res.json();
+      alert(result.mensaje);
+
+      cargarElementos();
+    });
+
+    async function cargarElementos() {
+      const res = await fetch('/api/multimedia');
+      const elementos = await res.json();
+      lista.innerHTML = elementos.map(el => `
+        <div class="card">
+          <h3>${el.titulo}</h3>
+          <p>${el.descripcion || ''}</p>
+          <img src="${el.imagenUrl}" width="150">
+          <audio controls src="${el.audioUrl}"></audio>
+          <p><strong>Tags:</strong> ${el.tags.join(', ')}</p>
+        </div>
+      `).join('');
+    }
+
+    cargarElementos();
+  </script>
+</body>
+</html>

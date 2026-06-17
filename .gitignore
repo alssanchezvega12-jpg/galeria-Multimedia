@@ -1,0 +1,9 @@
+# Dependencias
+node_modules/
+
+# Variables privadas
+.env
+
+# Archivos temporales y logs
+*.log
+uploads/
