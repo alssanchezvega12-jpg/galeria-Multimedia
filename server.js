@@ -1,23 +1,26 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
+require('dotenv').config(); // 👈 carga variables de entorno
 const Multimedia = require('./models/Multimedia'); // Importar el modelo
 
 const app = express();
 
-// Middleware
+/* ------------------ MIDDLEWARE ------------------ */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public')); // sirve index.html y script.js
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads')); // carpeta para archivos subidos
 
-// Conexión a MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Conectado a MongoDB"))
+/* ------------------ CONEXIÓN A MONGODB ------------------ */
+mongoose.connect(process.env.MONGO_URI,
+)
+  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch(err => console.error("❌ Error de conexión:", err));
 
-// Configuración de Multer para subir imagen y audio
+/* ------------------ CONFIGURACIÓN DE MULTER ------------------ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -25,8 +28,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ------------------ RUTAS ------------------ */
-app.use(express.static('public'));
-
 
 // CREATE
 app.post('/api/multimedia', upload.fields([{ name: 'imagen' }, { name: 'audio' }]), async (req, res) => {
@@ -74,7 +75,7 @@ app.get('/api/multimedia/tag/:tag', async (req, res) => {
   }
 });
 
-// UPDATE general (titulo, descripcion, tags, etc.)
+// UPDATE general
 app.put('/api/multimedia/:id', async (req, res) => {
   try {
     const actualizado = await Multimedia.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -112,4 +113,5 @@ app.delete('/api/multimedia/:id', async (req, res) => {
 });
 
 /* ------------------ INICIO SERVIDOR ------------------ */
-app.listen(3000, () => console.log("🚀 Servidor en http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
