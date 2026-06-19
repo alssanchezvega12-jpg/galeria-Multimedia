@@ -20,38 +20,67 @@
   <div id="lista"></div>
 
   <script>
-    const form = document.getElementById('multimediaForm');
-    const lista = document.getElementById('lista');
+  const form = document.getElementById('multimediaForm');
+  const lista = document.getElementById('lista');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
 
-      const res = await fetch('/api/multimedia', {
-        method: 'POST',
-        body: data
-      });
-      const result = await res.json();
-      alert(result.mensaje);
-
-      cargarElementos();
+    const res = await fetch('/api/multimedia', {
+      method: 'POST',
+      body: data
     });
-
-    async function cargarElementos() {
-      const res = await fetch('/api/multimedia');
-      const elementos = await res.json();
-      lista.innerHTML = elementos.map(el => `
-        <div class="card">
-          <h3>${el.titulo}</h3>
-          <p>${el.descripcion || ''}</p>
-          <img src="${el.imagenUrl}" width="150">
-          <audio controls src="${el.audioUrl}"></audio>
-          <p><strong>Tags:</strong> ${el.tags.join(', ')}</p>
-        </div>
-      `).join('');
-    }
+    const result = await res.json();
+    alert(result.mensaje);
 
     cargarElementos();
-  </script>
+  });
+
+  async function cargarElementos() {
+    const res = await fetch('/api/multimedia');
+    const elementos = await res.json();
+    lista.innerHTML = elementos.map(el => `
+      <div class="card">
+        <h3>${el.titulo}</h3>
+        <p>${el.descripcion || ''}</p>
+        <img src="${el.imagenUrl}" width="150">
+        <audio controls src="${el.audioUrl}"></audio>
+        <p><strong>Tags:</strong> ${el.tags.join(', ')}</p>
+        
+        <!-- Botones CRUD -->
+        <button onclick="editarElemento('${el._id}')">✏️ Editar</button>
+        <button onclick="eliminarElemento('${el._id}')">🗑️ Eliminar</button>
+      </div>
+    `).join('');
+  }
+
+  // Funciones editar y eliminar
+  async function editarElemento(id) {
+    const nuevoTitulo = prompt("Nuevo título:");
+    const nuevaDescripcion = prompt("Nueva descripción:");
+    if (!nuevoTitulo && !nuevaDescripcion) return;
+
+    const res = await fetch(`/api/multimedia/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ titulo: nuevoTitulo, descripcion: nuevaDescripcion })
+    });
+    const data = await res.json();
+    alert(data.mensaje || "Elemento actualizado correctamente ✏️");
+    cargarElementos();
+  }
+
+  async function eliminarElemento(id) {
+    if (!confirm("¿Seguro que quieres eliminar este elemento?")) return;
+    const res = await fetch(`/api/multimedia/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    alert(data.mensaje);
+    cargarElementos();
+  }
+
+  cargarElementos();
+</script>
+
 </body>
 </html>

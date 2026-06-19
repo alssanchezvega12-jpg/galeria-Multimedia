@@ -38,10 +38,41 @@ button:hover {
   background: #d62839;
 }
 
+/* Tarjetas */
 .card {
   background: #fff;
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Botones CRUD dentro de las tarjetas */
+.card button {
+  display: inline-block;
+  margin: 6px 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: transform 0.2s, background 0.3s;
+}
+
+/* Botón editar */
+.card button:first-of-type {
+  background: #ff6b81; /* rosado */
+}
+
+.card button:first-of-type:hover {
+  background: #ff4757;
+  transform: scale(1.05);
+}
+
+/* Botón eliminar */
+.card button:last-of-type {
+  background: #e84118; /* rojo fuerte */
+}
+
+.card button:last-of-type:hover {
+  background: #c23616;
+  transform: scale(1.05);
 }
