@@ -55,12 +55,14 @@ app.post('/api/multimedia', upload.fields([{ name: 'imagen' }, { name: 'audio' }
 // READ todos
 app.get('/api/multimedia', async (req, res) => {
   try {
-    const elementos = await Multimedia.find().sort({ fechaCreacion: -1 });
+    const elementos = await Multimedia.find();
     res.json(elementos);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+const elementos = await Multimedia.find().sort({ _id: -1 });
 
 // READ uno por ID (para Mostrar 👁️)
 app.get('/api/multimedia/:id', async (req, res) => {

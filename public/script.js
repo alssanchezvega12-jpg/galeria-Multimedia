@@ -16,24 +16,21 @@ form.addEventListener('submit', async (e) => {
 });
 
 async function cargarElementos() {
-  const res = await fetch('/api/multimedia');
-  const elementos = await res.json();
-  lista.innerHTML = elementos.map(el => `
-    <div class="card">
-      <h3>${el.titulo}</h3>
-      <p>${el.descripcion || ''}</p>
-      <img src="${el.imagenUrl}" width="150">
-      <audio controls src="${el.audioUrl}"></audio>
-      <p><strong>Tags:</strong> ${el.tags.join(', ')}</p>
-      
-      <!-- Botones CRUD -->
-      <button onclick="mostrarElemento('${el._id}')">👁️ Mostrar</button>
-      <button onclick="editarElemento('${el._id}')">✏️ Editar</button>
-      <button onclick="eliminarElemento('${el._id}')">🗑️ Eliminar</button>
-      <button onclick="crearElemento('${el._id}')">➕ Crear</button>
-    </div>
-  `).join('');
+  try {
+    const res = await fetch('/api/multimedia');
+    const elementos = await res.json();
+
+    if (!Array.isArray(elementos)) {
+      console.error("Respuesta inesperada:", elementos);
+      return;
+    }
+
+    lista.innerHTML = elementos.map(el => `...`).join('');
+  } catch (error) {
+    console.error("Error al cargar elementos:", error);
+  }
 }
+
 
 // Mostrar
 async function mostrarElemento(id) {
