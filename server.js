@@ -1,22 +1,19 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
-require('dotenv').config(); // 👈 carga variables de entorno
-const Multimedia = require('./models/Multimedia'); // Importar el modelo
+require('dotenv').config();
+const Multimedia = require('./models/Multimedia');
 
 const app = express();
 
 /* ------------------ MIDDLEWARE ------------------ */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // sirve index.html y script.js
 app.use('/uploads', express.static('uploads')); // carpeta para archivos subidos
 
 /* ------------------ CONEXIÓN A MONGODB ------------------ */
-mongoose.connect(process.env.MONGO_URI,
-)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch(err => console.error("❌ Error de conexión:", err));
 
@@ -27,9 +24,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* ------------------ RUTAS ------------------ */
+/* ------------------ RUTAS API ------------------ */
 
-// CREATE
+// CREATE (imagen + audio + tags)
 app.post('/api/multimedia', upload.fields([{ name: 'imagen' }, { name: 'audio' }]), async (req, res) => {
   try {
     if (!req.files || !req.files['imagen'] || !req.files['audio']) {
@@ -44,7 +41,7 @@ app.post('/api/multimedia', upload.fields([{ name: 'imagen' }, { name: 'audio' }
       descripcion: req.body.descripcion,
       imagenUrl,
       audioUrl,
-      tags: req.body.tags ? req.body.tags.split(',') : []
+      tags: req.body.tags ? req.body.tags.split(',').map(t => t.trim()) : []
     });
 
     await nuevo.save();
@@ -60,6 +57,17 @@ app.get('/api/multimedia', async (req, res) => {
   try {
     const elementos = await Multimedia.find().sort({ fechaCreacion: -1 });
     res.json(elementos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// READ uno por ID (para Mostrar 👁️)
+app.get('/api/multimedia/:id', async (req, res) => {
+  try {
+    const elemento = await Multimedia.findById(req.params.id);
+    if (!elemento) return res.status(404).json({ mensaje: "Elemento no encontrado" });
+    res.json(elemento);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,9 +97,13 @@ app.put('/api/multimedia/:id', async (req, res) => {
 // UPDATE solo tags
 app.put('/api/multimedia/:id/tags', async (req, res) => {
   try {
+    const tagsArray = Array.isArray(req.body.tags)
+      ? req.body.tags
+      : req.body.tags.split(',').map(t => t.trim());
+
     const actualizado = await Multimedia.findByIdAndUpdate(
       req.params.id,
-      { $set: { tags: req.body.tags } }, // req.body.tags debe ser array
+      { $set: { tags: tagsArray } },
       { new: true }
     );
     if (!actualizado) return res.status(404).json({ mensaje: "Elemento no encontrado" });
@@ -112,6 +124,9 @@ app.delete('/api/multimedia/:id', async (req, res) => {
   }
 });
 
+/* ------------------ FRONTEND ------------------ */
+app.use(express.static('public')); // sirve index.html y script.js
+
 /* ------------------ INICIO SERVIDOR ------------------ */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));
