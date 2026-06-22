@@ -15,8 +15,16 @@
     <input type="file" name="imagen" accept="image/*" required>
     <input type="file" name="audio" accept="audio/*" required>
     <input type="text" name="tags" placeholder="Tags (ej: música,paisaje,revolucionario)">
-    <button type="submit">Guardar</button>
+    <button type="submit" id="btnGuardar">💾 Guardar</button>
   </form>
+
+  <!-- Botones CRUD -->
+  <div class="crud-buttons">
+    <button id="btnCrear">➕ Crear</button>
+    <button id="btnLeer">👁️ Leer</button>
+    <button id="btnActualizar">✏️ Actualizar</button>
+    <button id="btnEliminar">🗑️ Eliminar</button>
+  </div>
 
   <h2>🎶 Elementos guardados</h2>
   <div id="lista"></div>
@@ -24,3 +32,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
