@@ -15,6 +15,7 @@ form.addEventListener('submit', async (e) => {
   cargarElementos();
 });
 
+// Cargar elementos y renderizar tarjetas
 async function cargarElementos() {
   try {
     const res = await fetch('/api/multimedia');
@@ -25,12 +26,25 @@ async function cargarElementos() {
       return;
     }
 
-    lista.innerHTML = elementos.map(el => `...`).join('');
+    lista.innerHTML = elementos.map(el => `
+      <div class="card">
+        <h3>${el.titulo}</h3>
+        <p>${el.descripcion || 'Sin descripción'}</p>
+        <img src="${el.imagenUrl}" alt="${el.titulo}">
+        <audio controls src="${el.audioUrl}"></audio>
+        <p><strong>Tags:</strong> ${el.tags.join(', ')}</p>
+        <div>
+          <button class="btn-mostrar" onclick="mostrarElemento('${el._id}')">👁️ Mostrar</button>
+          <button class="btn-editar" onclick="editarElemento('${el._id}')">✏️ Editar</button>
+          <button class="btn-eliminar" onclick="eliminarElemento('${el._id}')">🗑️ Eliminar</button>
+          <button class="btn-duplicar" onclick="crearElemento('${el._id}')">➕ Duplicar</button>
+        </div>
+      </div>
+    `).join('');
   } catch (error) {
     console.error("Error al cargar elementos:", error);
   }
 }
-
 
 // Mostrar
 async function mostrarElemento(id) {
@@ -94,4 +108,5 @@ async function crearElemento(id) {
   cargarElementos();
 }
 
+// Inicializar
 cargarElementos();
