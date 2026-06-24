@@ -1,4 +1,4 @@
-const API_URL = '/api/multimedia';
+const API_URL = 'https://galeria-multimedia-hgo7.onrender.com/api/multimedia';
 const form = document.getElementById('multimediaForm');
 const lista = document.getElementById('lista');
 
