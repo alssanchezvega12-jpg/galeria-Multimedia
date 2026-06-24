@@ -15,20 +15,13 @@
     <input type="file" name="imagen" accept="image/*" required>
     <input type="file" name="audio" accept="audio/*" required>
     <input type="text" name="tags" placeholder="Tags (ej: música,paisaje,revolucionario)">
-    <!-- Botón Crear -->
     <button type="submit" id="btnCrear">➕ Crear</button>
   </form>
 
   <!-- Botones CRUD globales -->
   <div class="crud-buttons">
-  <button onclick="cargarElementos()">👁️ Leer</button>
-  <button onclick="editarElementoPrompt()">✏️ Actualizar</button>
-  <button onclick="eliminarElementoPrompt()">🗑️ Eliminar</button>
-</div>
+    <button onclick="cargarElementos()">👁️ Leer</button>
+    <button onclick="editarElemento(prompt('Nombre del elemento a editar:'))">✏️ Actualizar</button>
+    <button onclick="eliminarElemento(prompt('Nombre del elemento a eliminar:'))">🗑️ Eliminar</button>
+  </div>
 
-  <h2>🎶 Elementos guardados</h2>
-  <div id="lista"></div>
-
-  <script src="script.js"></script>
-</body>
-</html>

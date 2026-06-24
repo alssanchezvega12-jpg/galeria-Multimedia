@@ -63,21 +63,21 @@ app.get('/api/multimedia', async (req, res) => {
   }
 });
 
-// READ uno
-app.get('/api/multimedia/:id', async (req, res) => {
+// READ uno por nombre
+app.get('/api/multimedia/:nombre', async (req, res) => {
   try {
-    const el = await Multimedia.findById(req.params.id);
+    const el = await Multimedia.findOne({ titulo: req.params.nombre });
     res.json(el);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// UPDATE
-app.put('/api/multimedia/:id', async (req, res) => {
+// UPDATE por nombre
+app.put('/api/multimedia/:nombre', async (req, res) => {
   try {
-    const actualizado = await Multimedia.findByIdAndUpdate(
-      req.params.id,
+    const actualizado = await Multimedia.findOneAndUpdate(
+      { titulo: req.params.nombre },
       { titulo: req.body.titulo, descripcion: req.body.descripcion },
       { new: true }
     );
@@ -87,20 +87,20 @@ app.put('/api/multimedia/:id', async (req, res) => {
   }
 });
 
-// DELETE
-app.delete('/api/multimedia/:id', async (req, res) => {
+// DELETE por nombre
+app.delete('/api/multimedia/:nombre', async (req, res) => {
   try {
-    await Multimedia.findByIdAndDelete(req.params.id);
+    await Multimedia.findOneAndDelete({ titulo: req.params.nombre });
     res.json({ mensaje: "Elemento eliminado correctamente 🗑️" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// DUPLICATE
-app.post('/api/multimedia/:id/duplicate', async (req, res) => {
+// DUPLICATE por nombre
+app.post('/api/multimedia/:nombre/duplicate', async (req, res) => {
   try {
-    const original = await Multimedia.findById(req.params.id);
+    const original = await Multimedia.findOne({ titulo: req.params.nombre });
     if (!original) return res.status(404).json({ mensaje: "Elemento no encontrado" });
 
     const copia = new Multimedia({
