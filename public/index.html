@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>🎨 Mi Galería Multimedia</title>
   <link rel="stylesheet" href="style.css">
-  <!-- CORRECCIÓN: Etiqueta script bien cerrada y apuntando a tu archivo de lógica local -->
-  <script src="script.js" defer></script>
+  <!-- El ./ busca el archivo directamente en tu carpeta local -->
+  <script src="./script.js" defer></script>
 </head>
 <body>
+
   <h1>📂 Mi Galería Multimedia</h1>
 
-  <!-- Formulario -->
+  <!-- Formulario para crear elementos -->
   <form id="multimediaForm" enctype="multipart/form-data">
     <input type="text" name="titulo" placeholder="Título" required>
     <textarea name="descripcion" placeholder="Descripción"></textarea>
@@ -20,11 +21,15 @@
     <button type="submit" id="btnCrear">➕ Crear</button>
   </form>
 
-  <!-- Botones CRUD globales -->
+  <!-- Botones CRUD globales (Piden exclusivamente NOMBRE, no ID) -->
   <div class="crud-buttons">
-    <button onclick="cargarElementos()">👁️ Leer</button>
-    <button onclick="editarElemento(prompt('Nombre del elemento a editar:'))">✏️ Actualizar</button>
-    <button onclick="eliminarElemento(prompt('Nombre del elemento a eliminar:'))">🗑️ Eliminar</button>
+    <button onclick="cargarElementos()">👁️ Leer Todo</button>
+    <button onclick="solicitarNombreParaEditar()">✏️ Actualizar por Nombre</button>
+    <button onclick="solicitarNombreParaEliminar()">🗑️ Eliminar por Nombre</button>
   </div>
+
+  <!-- Contenedor donde se cargarán tus tarjetas multimedia -->
+  <div id="lista"></div>
+
 </body>
 </html>
